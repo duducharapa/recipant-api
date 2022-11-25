@@ -1,8 +1,6 @@
 package com.charapadev.recipant.domain.recipes.controllers;
 
-import com.charapadev.recipant.domain.recipes.dtos.CreateRecipeDTO;
-import com.charapadev.recipant.domain.recipes.dtos.UpdateRecipeDTO;
-import com.charapadev.recipant.domain.recipes.entities.Recipe;
+import com.charapadev.recipant.domain.recipes.dtos.*;
 import com.charapadev.recipant.domain.recipes.services.RecipeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,23 +20,23 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
-    @GetMapping()
-    public ResponseEntity<List<Recipe>> list() {
-        List<Recipe> recipes = recipeService.list();
+    @GetMapping
+    public ResponseEntity<List<ShowRecipeDTO>> list() {
+        List<ShowRecipeDTO> recipes = recipeService.list();
 
         return ResponseEntity.ok(recipes);
     }
 
-    @PostMapping()
-    public ResponseEntity<Recipe> create(@Valid @RequestBody CreateRecipeDTO createDTO) {
-        Recipe recipe = recipeService.create(createDTO);
+    @PostMapping
+    public ResponseEntity<ShowRecipeDTO> create(@Valid @RequestBody CreateRecipeDTO createDTO) {
+        ShowRecipeDTO recipe = recipeService.create(createDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(recipe);
     }
 
     @GetMapping("/{recipeId}")
-    public ResponseEntity<Recipe> find(@PathVariable("recipeId") UUID recipeId) {
-        Recipe recipeFound = recipeService.findOneOrFail(recipeId);
+    public ResponseEntity<ShowRecipeDTO> find(@PathVariable("recipeId") UUID recipeId) {
+        ShowRecipeDTO recipeFound = recipeService.findOneToShowOrFail(recipeId);
 
         return ResponseEntity.ok(recipeFound);
     }
@@ -58,5 +56,15 @@ public class RecipeController {
         recipeService.delete(recipeId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{recipeId}/ingredients")
+    public ResponseEntity<ShowRelatedIngredientDTO> addIngredient(
+        @PathVariable("recipeId") UUID recipeId,
+        @Valid @RequestBody AddIngredientDTO addDTO
+    ) {
+        ShowRelatedIngredientDTO ingredient = recipeService.addIngredient(recipeId, addDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ingredient);
     }
 }

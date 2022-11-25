@@ -1,11 +1,11 @@
 package com.charapadev.recipant.domain.recipes.entities;
 
+import com.charapadev.recipant.domain.ingredients.entities.Ingredient;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,30 +14,24 @@ import java.util.UUID;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "recipes")
-public class Recipe implements Serializable {
+public class RecipeIngredient implements Serializable {
 
     @Id
     @GeneratedValue
     private UUID id;
 
+    @ManyToOne
+    private Ingredient ingredient;
+
     @Column
-    private String name;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ToString.Exclude
-    private List<RecipeIngredient> ingredients;
-
-    public void addIngredient(RecipeIngredient ingredient) {
-        ingredients.add(ingredient);
-    }
+    private Float quantity;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Recipe recipe = (Recipe) o;
-        return id != null && Objects.equals(id, recipe.id);
+        RecipeIngredient that = (RecipeIngredient) o;
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
