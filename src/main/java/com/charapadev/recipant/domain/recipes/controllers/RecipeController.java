@@ -2,6 +2,7 @@ package com.charapadev.recipant.domain.recipes.controllers;
 
 import com.charapadev.recipant.domain.recipes.dtos.*;
 import com.charapadev.recipant.domain.recipes.services.RecipeService;
+import com.charapadev.recipant.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,9 @@ public class RecipeController {
     }
 
     @GetMapping("/{recipeId}")
-    public ResponseEntity<ShowRecipeDTO> find(@PathVariable("recipeId") UUID recipeId) {
+    public ResponseEntity<ShowRecipeDTO> find(@PathVariable("recipeId") UUID recipeId)
+        throws ResourceNotFoundException
+    {
         ShowRecipeDTO recipeFound = recipeService.findOneToShowOrFail(recipeId);
 
         return ResponseEntity.ok(recipeFound);
@@ -45,14 +48,14 @@ public class RecipeController {
     public ResponseEntity<Void>  update(
         @PathVariable("recipeId") UUID recipeId,
         @Valid @RequestBody UpdateRecipeDTO updateDTO
-    ) {
+    ) throws ResourceNotFoundException {
         recipeService.update(recipeId, updateDTO);
 
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{recipeId}")
-    public ResponseEntity<Void> delete(@PathVariable("recipeId") UUID recipeId) {
+    public ResponseEntity<Void> delete(@PathVariable("recipeId") UUID recipeId) throws ResourceNotFoundException {
         recipeService.delete(recipeId);
 
         return ResponseEntity.noContent().build();
@@ -62,7 +65,7 @@ public class RecipeController {
     public ResponseEntity<ShowRelatedIngredientDTO> addIngredient(
         @PathVariable("recipeId") UUID recipeId,
         @Valid @RequestBody AddIngredientDTO addDTO
-    ) {
+    ) throws ResourceNotFoundException {
         ShowRelatedIngredientDTO ingredient = recipeService.addIngredient(recipeId, addDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredient);

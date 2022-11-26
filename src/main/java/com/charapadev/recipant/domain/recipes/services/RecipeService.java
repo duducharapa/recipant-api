@@ -7,12 +7,12 @@ import com.charapadev.recipant.domain.recipes.dtos.*;
 import com.charapadev.recipant.domain.recipes.entities.Recipe;
 import com.charapadev.recipant.domain.recipes.entities.RecipeIngredient;
 import com.charapadev.recipant.domain.recipes.repositories.RecipeRepository;
+import com.charapadev.recipant.exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -53,7 +53,7 @@ public class RecipeService {
         boolean recipeNotExists = !recipeRepository.existsById(recipeId);
 
         if (recipeNotExists) {
-            throw new NoSuchElementException("Cannot found a Recipe with the given ID: " + recipeId);
+            throw new ResourceNotFoundException("Cannot found a Recipe with the given ID: " + recipeId);
         }
     }
 
@@ -84,7 +84,7 @@ public class RecipeService {
 
     public Recipe findOneOrFail(UUID recipeId) {
         return recipeRepository.findById(recipeId)
-            .orElseThrow(() -> new NoSuchElementException("Cannot found a Recipe with the given ID: " + recipeId));
+            .orElseThrow(() -> new ResourceNotFoundException("Cannot found a Recipe with the given ID: " + recipeId));
     }
 
     /**
